@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>WebPaint</title>
+</head>
+
+<body>
+	<canvas id="canvas" width="800" height="600" style="border: 1px solid black;">
+		<p>Your browser doesn't support the canvas element. Please update your browser or use a more modern one.</p>
+	</canvas>
+	<input id="plus" type="button" value="+" />
+	<input id="minus" type="button" value="-" />
+	<span id="size">1</span>
+
+	<script>
+		var down = false;
+		var size = 1;
+		var oldX = -1;
+		var oldY = -1;
+
+		var canvas = document.getElementById('canvas');
+		if (canvas.getContext) {
+			var ctx = canvas.getContext('2d');
+			ctx.fillStyle = "rgb(0,0,0)";
+			canvas.addEventListener('mousedown', function() {
+				draw(); down = true;
+			});
+			canvas.addEventListener('mousemove', function() {
+				if (down) draw();
+			});
+			canvas.addEventListener('mouseup', function() {
+				down = false;
+			});
+		}
+		var disp = document.getElementById('size');
+		var plus = document.getElementById('plus');
+		plus.addEventListener('click', function() {
+			size++;
+			disp.innerHTML = size;
+		});
+		var minus = document.getElementById('minus');
+		minus.addEventListener('click', function() {
+			if (size > 1) {
+				size--;
+				disp.innerHTML = size;
+			}
+		});
+
+		function draw() {
+			var x = event.offsetX;
+			var y = event.offsetY;
+			ctx.beginPath();
+			if (down) {
+				ctx.moveTo(oldX, oldY);
+				ctx.lineTo(x, y);
+			}
+			else {
+				ctx.moveTo(x,y);
+				ctx.lineTo(x+1,y+1);
+			}
+			oldX = x;
+			oldY = y;
+			ctx.lineWidth = size;
+			ctx.stroke();
+		}
+	</script>
+</body>
+
+</html>
