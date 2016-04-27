@@ -9,9 +9,14 @@
 	<canvas id="canvas" width="800" height="600" style="border: 1px solid black;">
 		<p>Your browser doesn't support the canvas element. Please update your browser or use a more modern one.</p>
 	</canvas>
-	<input id="plus" type="button" value="+" />
-	<input id="minus" type="button" value="-" />
-	<span id="size">1</span>
+	<p>
+		<input id="plus" type="button" value="+" />
+		<input id="minus" type="button" value="-" />
+		<span id="size">1</span>
+	</p>
+	<p>
+		<input id="color" type="text" value="000000" />
+	</p>
 
 	<script>
 		var down = false;
@@ -19,9 +24,11 @@
 		var oldX = -1;
 		var oldY = -1;
 
+		// Set up canvas functionality
 		var canvas = document.getElementById('canvas');
+		var ctx = null;
 		if (canvas.getContext) {
-			var ctx = canvas.getContext('2d');
+			ctx = canvas.getContext('2d');
 			ctx.fillStyle = "rgb(0,0,0)";
 			canvas.addEventListener('mousedown', function() {
 				draw(); down = true;
@@ -33,6 +40,8 @@
 				down = false;
 			});
 		}
+
+		// Set up size functionality
 		var disp = document.getElementById('size');
 		var plus = document.getElementById('plus');
 		plus.addEventListener('click', function() {
@@ -47,18 +56,19 @@
 			}
 		});
 
+		// Set up color functionality
+		var color = document.getElementById('color');
+		color.addEventListener('input', function() {
+			ctx.strokeStyle = "#" + color.value;
+		});
+
 		function draw() {
 			var x = event.offsetX;
 			var y = event.offsetY;
 			ctx.beginPath();
-			if (down) {
-				ctx.moveTo(oldX, oldY);
-				ctx.lineTo(x, y);
-			}
-			else {
-				ctx.moveTo(x,y);
-				ctx.lineTo(x+1,y+1);
-			}
+			if (down) ctx.moveTo(oldX, oldY);
+			else ctx.moveTo(x-1, y-1)
+			ctx.lineTo(x, y);
 			oldX = x;
 			oldY = y;
 			ctx.lineWidth = size;
