@@ -5,6 +5,7 @@
     <script>
       angular.module('colorPicker', [])
         .controller('colorValueController', function() {
+          var letters = ["a", "b", "c", "d", "e", "f"];
           var colorValue = this;
           colorValue.hex = "000000";
           colorValue.r = 00;
@@ -13,11 +14,19 @@
           colorValue.valid = colorValue.hex;
 
           colorValue.updateRGB = function() {
-            /*if (colorValue.hex.length == 6) {
-              colorValue.r = colorValue.hex.slice(0,2);
-              colorValue.g = colorValue.hex.slice(2,4);
-              colorValue.b = colorValue.hex.slice(4,6);
-            }*/
+          	var valid = colorValue.hex.length == 6;
+            if (valid) {
+            	for (var i = 0; i < colorValue.hex.length && valid; i++) {
+            		var val = parseInt(colorValue.hex[i]);
+            		if (isNaN(val)) {
+            			valid = letters.indexOf(colorValue.hex[i]) != -1;
+            		}
+            	}
+            }
+            if (valid) {
+            	// UPDATE RGB DISPLAY VALUES
+            	colorValue.updateValid();
+            }
           }
 
           colorValue.updateHex = function() {
@@ -27,7 +36,6 @@
               valid = between(rgb[i], 0, 255);
             }
             if (valid) {
-              var letters = ["a", "b", "c", "d", "e", "f"];
               colorValue.hex = "";
               for (var i = 0; i < rgb.length; i++) {
                 var count = 0;
@@ -40,7 +48,13 @@
                 if (rgb[i] < 10) colorValue.hex += rgb[i];
                 else colorValue.hex += letters[rgb[i]-10];
               }
+              colorValue.updateValid();
             }
+          }
+
+          colorValue.updateValid = function() {
+          	colorValue.valid = colorValue.hex;
+          	console.log(colorValue.valid);
           }
 
           function between(x, min, max) {
@@ -52,14 +66,14 @@
   <body>
     <div ng-controller="colorValueController as colorValue">
       <p>
-        <input type="text" ng-model="colorValue.hex" ng-change="colorValue.updateRGB()">
+        <input type="text" maxlength="6" ng-model="colorValue.hex" ng-change="colorValue.updateRGB()">
       </p>
       <p>
         <input type="number" min="0" max="255" ng-model="colorValue.r" ng-change="colorValue.updateHex()">
         <input type="number" min="0" max="255" ng-model="colorValue.g" ng-change="colorValue.updateHex()">
         <input type="number" min="0" max="255" ng-model="colorValue.b" ng-change="colorValue.updateHex()">
       </p>
-      <div style="width: 50px; height: 50px; background-color: #{{colorValue.hex}}"></div>
+      <div style="width: 50px; height: 50px; background-color: #{{colorValue.valid}}"></div>
     </div>
   </body>
 </html>
