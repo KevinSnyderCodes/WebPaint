@@ -17,14 +17,20 @@
           	var valid = colorValue.hex.length == 6;
             if (valid) {
             	for (var i = 0; i < colorValue.hex.length && valid; i++) {
-            		var val = parseInt(colorValue.hex[i]);
-            		if (isNaN(val)) {
-            			valid = letters.indexOf(colorValue.hex[i]) != -1;
-            		}
+            		valid = !isNaN(parseInt(colorValue.hex[i])) || letters.indexOf(colorValue.hex[i]) != -1;
             	}
             }
             if (valid) {
-            	// UPDATE RGB DISPLAY VALUES
+            	var rgb = [0, 0, 0];
+            	for (var i = 0; i < rgb.length; i++) {
+            		var val1 = parseInt(colorValue.hex[i*2]);
+            		var val2 = parseInt(colorValue.hex[i*2+1]);
+            		rgb[i] += (!isNaN(val1) ? val1 : letters.indexOf(colorValue.hex[i*2]) + 10) * 16;
+            		rgb[i] += (!isNaN(val2) ? val2 : letters.indexOf(colorValue.hex[i*2+1]) + 10);
+            	}
+            	colorValue.r = rgb[0];
+            	colorValue.g = rgb[1];
+            	colorValue.b = rgb[2];
             	colorValue.updateValid();
             }
           }
